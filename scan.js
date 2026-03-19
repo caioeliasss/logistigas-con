@@ -9,7 +9,7 @@ const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = "192.168.10.91"
 const PORT = 2001
-const TOTAL_BICOS = 16 // ajuste para a quantidade de bicos do seu posto
+const TOTAL_BICOS = 49 // ajuste para a quantidade de bicos do seu posto
 
 function waitEnter() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
@@ -54,6 +54,7 @@ async function main() {
   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
     const bicoStr = bico.toString().padStart(2, "0")
     const resultado = C_ReadTotalsVolume(bicoStr)
+    if (resultado < 0) coonsole.log(`Bico inativo`)
     if (resultado !== -1) {
       console.log(`Bico ${bicoStr}: ${resultado}`)
     } else {

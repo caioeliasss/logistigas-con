@@ -51,12 +51,11 @@ async function main() {
   console.log(`Conectou em ${ip}:${PORT}\n`)
 
   console.log("=== ENCERRANTE (VOLUME) ===")
+  let bicoNotWorking = []
   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
     const bicoStr = bico.toString().padStart(2, "0")
     const resultado = C_ReadTotalsVolume(bicoStr)
 
-    let bicoNotWorking = []
-    
     if (resultado > -1) {
       console.log(`Bico ${bicoStr}: ${resultado}`)
     } else if(resultado === -2) {

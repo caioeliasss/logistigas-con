@@ -21,7 +21,15 @@ async function main() {
   const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
   const C_ReadTotalsCash = lib.func("int __stdcall C_ReadTotalsCash(const char *bico)")
   const C_Visualize = lib.func("const char* __stdcall C_Visualize()")
-  const GetEncerranteVolume = lib.func("const char* __stdcall GetEncerranteVolume(uint8_t bico)")
+
+  // Delphi ShortString: retorno via ponteiro oculto (1o byte = tamanho, resto = dados)
+  const GetEncerranteVolume = lib.func("void __stdcall GetEncerranteVolume(uint8_t *result, uint8_t bico)")
+  const GetEncerranteValor = lib.func("void __stdcall GetEncerranteValor(uint8_t *result, uint8_t bico)")
+
+  function readShortString(buf) {
+    const len = buf[0]
+    return buf.slice(1, 1 + len).toString("ascii")
+  }
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
@@ -39,24 +47,39 @@ async function main() {
 
   // 2) ENCERRANTE VOLUME + VALOR POR BICO
   console.log("=== ENCERRANTE (VOLUME / VALOR) ===")
-  for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
-    const bicoStr = bico.toString().padStart(2, "0")
-    const vol = C_ReadTotalsVolume(bicoStr)
-    const cash = C_ReadTotalsCash(bicoStr)
+//   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
+//     const bicoStr = bico.toString().padStart(2, "0")
+//     const vol = C_ReadTotalsVolume(bicoStr)
+//     const cash = C_ReadTotalsCash(bicoStr)
     
-    let status = ""
-    if (vol === -1 && cash === -1) status = "sem resposta"
-    else if (vol === -2 && cash === -2) status = "NAO CONFIGURADO"
-    else status = `vol=${vol}  valor=${cash}`
+//     let status = ""
+//     if (vol === -1 && cash === -1) status = "sem resposta"
+//     else if (vol === -2 && cash === -2) status = "NAO CONFIGURADO"
+//     else status = `vol=${vol}  valor=${cash}`
 
-    console.log(`Bico ${bicoStr}: ${status}`)
-  }
+//     console.log(`Bico ${bicoStr}: ${status}`)
+//   }
 
   // 3) ENCERRANTE VOLUME (funcao geral - retorna string)
   console.log("\n=== ENCERRANTE VOLUME (GetEncerranteVolume) ===")
   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
     try {
-      const resultado = GetEncerranteVolume(bico)
+      const buf = Buffer.alloc(256)
+      GetEncerranteVolume(buf, bico)
+      const resultado = readShortString(buf)
+      console.log(`Bico ${bico.toString().padStart(2, "0")}: ${resultado}`)
+    } catch (e) {
+      console.log(`Bico ${bico.toString().padStart(2, "0")}: ERRO - ${e.message}`)
+    }
+  }
+
+  // 3b) ENCERRANTE VALOR (funcao geral - retorna string)
+  console.log("\n=== ENCERRANTE VALOR (GetEncerranteValor) ===")
+  for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
+    try {
+      const buf = Buffer.alloc(256)
+      GetEncerranteValor(buf, bico)
+      const resultado = readShortString(buf)
       console.log(`Bico ${bico.toString().padStart(2, "0")}: ${resultado}`)
     } catch (e) {
       console.log(`Bico ${bico.toString().padStart(2, "0")}: ERRO - ${e.message}`)

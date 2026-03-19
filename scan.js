@@ -9,7 +9,7 @@ const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = "192.168.10.91"
 const PORT = 2001
-const TOTAL_BICOS = 49 // ajuste para a quantidade de bicos do seu posto
+const TOTAL_BICOS = 16 // ajuste para a quantidade de bicos do seu posto
 
 function waitEnter() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout })

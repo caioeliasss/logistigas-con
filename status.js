@@ -1,0 +1,67 @@
+const path = require("path")
+const readline = require("readline")
+
+const DLL_PATH = path.join(__dirname, "companytec.dll")
+const ip = "192.168.10.91"
+const PORT = 2001
+const TOTAL_BICOS = 16
+
+function waitEnter() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+  return new Promise((resolve) => rl.question("\nPressione ENTER para sair...", () => { rl.close(); resolve() }))
+}
+
+async function main() {
+  const koffi = require("koffi")
+  const lib = koffi.load(DLL_PATH)
+
+  const C_OpenSocket2 = lib.func("int __stdcall C_OpenSocket2(const char *ip, int port)")
+  const C_CloseSocket = lib.func("int __stdcall C_CloseSocket()")
+  const C_readState = lib.func("const char* __stdcall C_readState()")
+  const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
+  const C_ReadTotalsCash = lib.func("int __stdcall C_ReadTotalsCash(const char *bico)")
+  const C_Visualize = lib.func("const char* __stdcall C_Visualize()")
+
+  const connected = C_OpenSocket2(ip, PORT)
+  if (!connected) {
+    console.log("Falha ao conectar no concentrador")
+    await waitEnter()
+    process.exit(1)
+  }
+  console.log(`Conectou em ${ip}:${PORT}\n`)
+
+  // 1) STATUS DE TODOS OS BICOS
+  console.log("=== STATUS DOS BICOS ===")
+  const statusRaw = C_readState()
+  console.log("Resposta bruta:", statusRaw)
+  console.log("")
+
+  // 2) ENCERRANTE VOLUME + VALOR POR BICO
+  console.log("=== ENCERRANTE (VOLUME / VALOR) ===")
+  for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
+    const bicoStr = bico.toString().padStart(2, "0")
+    const vol = C_ReadTotalsVolume(bicoStr)
+    const cash = C_ReadTotalsCash(bicoStr)
+    
+    let status = ""
+    if (vol === -1 && cash === -1) status = "sem resposta"
+    else if (vol === -2 && cash === -2) status = "NAO CONFIGURADO"
+    else status = `vol=${vol}  valor=${cash}`
+
+    console.log(`Bico ${bicoStr}: ${status}`)
+  }
+
+  // 3) VISUALIZACAO EM TEMPO REAL
+  console.log("\n=== ABASTECIMENTOS EM ANDAMENTO ===")
+  const vizRaw = C_Visualize()
+  console.log("Resposta bruta:", vizRaw)
+
+  C_CloseSocket()
+  console.log("\nConexao encerrada.")
+  await waitEnter()
+}
+
+main().catch(async (e) => {
+  console.log("Erro inesperado:", e.message)
+  await waitEnter()
+})

@@ -4,14 +4,21 @@
   "main": "scan.js",
   "bin": "scan.js",
   "pkg": {
-    "targets": ["node18-win-x64"],
+    "targets": [
+      "node20-win-x64"
+    ],
     "outputPath": "dist",
-    "assets": []
+    "assets": [
+      "node_modules/koffi/**/*"
+    ]
   },
   "scripts": {
     "build": "pkg . --compress GZip"
   },
   "dependencies": {
     "koffi": "^2.15.2"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.14.1"
   }
 }

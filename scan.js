@@ -25,9 +25,9 @@ async function main() {
     process.exit(1)
   }
 
-  const C_OpenSocket2 = lib.func("int C_OpenSocket2(const char *ip, int port)")
-  const C_CloseSocket = lib.func("int C_CloseSocket()")
-  const C_ReadTotalsVolume = lib.func("int C_ReadTotalsVolume(const char *bico)")
+  const C_OpenSocket2 = lib.func("int __stdcall C_OpenSocket2(const char *ip, int port)")
+  const C_CloseSocket = lib.func("int __stdcall C_CloseSocket()")
+  const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {

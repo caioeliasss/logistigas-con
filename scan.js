@@ -54,12 +54,11 @@ async function main() {
   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
     const bicoStr = bico.toString().padStart(2, "0")
     const resultado = C_ReadTotalsVolume(bicoStr)
-    if (resultado < 0) {
-      console.log(`Bico ${bicoStr} inativo`)
-      return;
-    }
-    if (resultado !== -1) {
+    
+    if (resultado > -1) {
       console.log(`Bico ${bicoStr}: ${resultado}`)
+    } else if(resultado === -2) {
+      console.log(`Bico ${bicoStr}: inativo`)
     } else {
       console.log(`Bico ${bicoStr}: sem resposta`)
     }

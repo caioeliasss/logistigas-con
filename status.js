@@ -21,6 +21,7 @@ async function main() {
   const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
   const C_ReadTotalsCash = lib.func("int __stdcall C_ReadTotalsCash(const char *bico)")
   const C_Visualize = lib.func("const char* __stdcall C_Visualize()")
+  const GetEncerranteVolume = lib.func("const char* __stdcall GetEncerranteVolume(int bico)")
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
@@ -51,7 +52,14 @@ async function main() {
     console.log(`Bico ${bicoStr}: ${status}`)
   }
 
-  // 3) VISUALIZACAO EM TEMPO REAL
+  // 3) ENCERRANTE VOLUME (funcao geral - retorna string)
+  console.log("\n=== ENCERRANTE VOLUME (GetEncerranteVolume) ===")
+  for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
+    const resultado = GetEncerranteVolume(bico)
+    console.log(`Bico ${bico.toString().padStart(2, "0")}: ${resultado}`)
+  }
+
+  // 4) VISUALIZACAO EM TEMPO REAL
   console.log("\n=== ABASTECIMENTOS EM ANDAMENTO ===")
   const vizRaw = C_Visualize()
   console.log("Resposta bruta:", vizRaw)

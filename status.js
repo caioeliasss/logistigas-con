@@ -26,6 +26,12 @@ async function main() {
   const GetEncerranteVolume = lib.func("void __stdcall GetEncerranteVolume(uint8_t *result, uint8_t bico)")
   const GetEncerranteValor = lib.func("void __stdcall GetEncerranteValor(uint8_t *result, uint8_t bico)")
 
+  // Ler registro especifico (NAO mexe no ponteiro)
+  const C_ReadRegister = lib.func("const char* __stdcall C_ReadRegister(const char *reg)")
+
+  // Ponteiros de memoria (Delphi record: writePointer string[4] + readPointer string[4])
+  const GetMemoryPointers = lib.func("void __stdcall GetMemoryPointers(uint8_t *result)")
+
   function readShortString(buf) {
     const len = buf[0]
     return buf.slice(1, 1 + len).toString("ascii")
@@ -90,6 +96,51 @@ async function main() {
   console.log("\n=== ABASTECIMENTOS EM ANDAMENTO ===")
   const vizRaw = C_Visualize()
   console.log("Resposta bruta:", vizRaw)
+
+  // 5) PONTEIROS DE MEMORIA
+  console.log("\n=== PONTEIROS DE MEMORIA ===")
+  try {
+    // GetMemoryPointers retorna record Delphi (hidden result pointer)
+    // MemoryPointers = record writePointer: string[4]; readPointer: string[4]; end;
+    // string[4] em Delphi = 1 byte tamanho + 4 bytes dados = 5 bytes cada
+    const ptrBuf = Buffer.alloc(32)
+    GetMemoryPointers(ptrBuf)
+    const wpLen = ptrBuf[0]
+    const writePtr = ptrBuf.slice(1, 1 + wpLen).toString("ascii")
+    const rpLen = ptrBuf[5]
+    const readPtr = ptrBuf.slice(6, 6 + rpLen).toString("ascii")
+    console.log(`Ponteiro escrita (write): ${writePtr}`)
+    console.log(`Ponteiro leitura (read):  ${readPtr}`)
+
+    // 6) LER ULTIMOS REGISTROS (sem mover ponteiro)
+    const wp = parseInt(writePtr, 10)
+    const rp = parseInt(readPtr, 10)
+    if (!isNaN(wp)) {
+      console.log("\n=== ULTIMOS REGISTROS (C_ReadRegister) ===")
+      // Le os ultimos 5 registros a partir do writePointer para tras
+      const start = Math.max(1, wp - 4)
+      for (let reg = start; reg <= wp; reg++) {
+        const regStr = reg.toString()
+        const resp = C_ReadRegister(regStr)
+        console.log(`Registro ${regStr}: ${resp}`)
+      }
+    }
+
+    if (!isNaN(rp) && !isNaN(wp) && rp !== wp) {
+      console.log("\n=== REGISTROS NAO LIDOS (read -> write) ===")
+      console.log(`Pendentes: ${wp - rp} registros (read=${rp}, write=${wp})`)
+      // Mostra no maximo 10 pendentes
+      const maxShow = Math.min(wp - rp, 10)
+      for (let i = 0; i < maxShow; i++) {
+        const reg = rp + 1 + i
+        const regStr = reg.toString()
+        const resp = C_ReadRegister(regStr)
+        console.log(`Registro ${regStr}: ${resp}`)
+      }
+    }
+  } catch (e) {
+    console.log("Erro ao ler ponteiros/registros:", e.message)
+  }
 
   C_CloseSocket()
   console.log("\nConexao encerrada.")

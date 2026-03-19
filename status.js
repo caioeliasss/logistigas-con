@@ -21,7 +21,7 @@ async function main() {
   const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
   const C_ReadTotalsCash = lib.func("int __stdcall C_ReadTotalsCash(const char *bico)")
   const C_Visualize = lib.func("const char* __stdcall C_Visualize()")
-  const GetEncerranteVolume = lib.func("const char* __stdcall GetEncerranteVolume(int bico)")
+  const GetEncerranteVolume = lib.func("const char* __stdcall GetEncerranteVolume(uint8_t bico)")
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
@@ -55,8 +55,12 @@ async function main() {
   // 3) ENCERRANTE VOLUME (funcao geral - retorna string)
   console.log("\n=== ENCERRANTE VOLUME (GetEncerranteVolume) ===")
   for (let bico = 1; bico <= TOTAL_BICOS; bico++) {
-    const resultado = GetEncerranteVolume(bico)
-    console.log(`Bico ${bico.toString().padStart(2, "0")}: ${resultado}`)
+    try {
+      const resultado = GetEncerranteVolume(bico)
+      console.log(`Bico ${bico.toString().padStart(2, "0")}: ${resultado}`)
+    } catch (e) {
+      console.log(`Bico ${bico.toString().padStart(2, "0")}: ERRO - ${e.message}`)
+    }
   }
 
   // 4) VISUALIZACAO EM TEMPO REAL

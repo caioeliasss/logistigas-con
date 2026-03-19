@@ -3,7 +3,7 @@ const readline = require("readline")
 const koffi = require("koffi")
 
 // Resolve o caminho da DLL relativo ao exe/script
-const DLL_PATH = "./companytec.dll"
+const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = "192.168.10.91"
 const PORT = 2001

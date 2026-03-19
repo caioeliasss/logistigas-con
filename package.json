@@ -1,0 +1,17 @@
+{
+  "name": "logistigas-con",
+  "version": "1.0.0",
+  "main": "scan.js",
+  "bin": "scan.js",
+  "pkg": {
+    "targets": ["node18-win-x64"],
+    "outputPath": "dist",
+    "assets": []
+  },
+  "scripts": {
+    "build": "pkg . --compress GZip"
+  },
+  "dependencies": {
+    "koffi": "^2.15.2"
+  }
+}

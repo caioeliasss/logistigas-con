@@ -1,6 +1,8 @@
 const path = require("path")
 const readline = require("readline")
-const koffi = require("koffi")
+
+console.log("Script iniciado...")
+console.log("Diretorio:", __dirname)
 
 // Resolve o caminho da DLL relativo ao exe/script
 const DLL_PATH = path.join(__dirname, "companytec.dll")
@@ -15,12 +17,23 @@ function waitEnter() {
 }
 
 async function main() {
+  let koffi
+  try {
+    koffi = require("koffi")
+  } catch (e) {
+    console.log("Erro ao carregar modulo koffi:")
+    console.log(e.message)
+    await waitEnter()
+    process.exit(1)
+  }
+
   let lib
   try {
     lib = koffi.load(DLL_PATH)
   } catch (e) {
     console.log(`Erro ao carregar DLL: ${DLL_PATH}`)
     console.log("Coloque a companytec.dll na mesma pasta do executavel.")
+    console.log(e.message)
     await waitEnter()
     process.exit(1)
   }
@@ -53,4 +66,8 @@ async function main() {
   await waitEnter()
 }
 
-main()
+main().catch(async (e) => {
+  console.log("Erro inesperado:")
+  console.log(e.message)
+  await waitEnter()
+})

@@ -1,5 +1,4 @@
 const path = require("path")
-const { send } = require("process")
 const readline = require("readline")
 
 console.log("Script iniciado...")

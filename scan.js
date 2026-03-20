@@ -10,7 +10,7 @@ const ip = "192.168.10.91"
 const PORT = 2001
 
 const BICOS = {
-  "B4": { concentrador: "84", tanque: "001", bomba: "BOMBA 01", produto: "GASOLINA C COMUM" },
+  "84": { concentrador: "84", tanque: "001", bomba: "BOMBA 01", produto: "GASOLINA C COMUM" },
   "44": { concentrador: "44", tanque: "002", bomba: "BOMBA 01", produto: "GASOLINA C ADITIVADA" },
   "04": { concentrador: "04", tanque: "003", bomba: "BOMBA 01", produto: "ETANOL HIDRATADO COMUM" },
   "85": { concentrador: "85", tanque: "001", bomba: "BOMBA 01", produto: "GASOLINA C COMUM" },

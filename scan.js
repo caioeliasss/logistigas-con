@@ -1,4 +1,5 @@
 const path = require("path")
+const { send } = require("process")
 const readline = require("readline")
 
 console.log("Script iniciado...")
@@ -8,6 +9,8 @@ const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = "192.168.10.91"
 const PORT = 2001
+
+const POSTO = "6908fdef32603381acec0c07"
 
 const BICOS = {
   "84": { concentrador: "84", tanque: "001", bomba: "BOMBA 01", produto: "GASOLINA C COMUM" },
@@ -82,11 +85,26 @@ async function main() {
       console.log(`  ${bicoStr}  | FALHA (-1)`)
       bicosFalha.push(bicoStr)
     } else {
+      BICOS[bico].encerrante = resultado
       console.log(`  ${bicoStr}  | ${resultado}`)
     }
   }
 
   console.log("\nBicos com falha:", bicosFalha.length > 0 ? bicosFalha.join(", ") : "Nenhum")
+
+  try {
+    const sendEncerrante = require("./service/api").sendEncerrante
+
+    await sendEncerrante({
+      posto: POSTO,
+      dataLeitura: new Date(),
+      bicos: BICOS,
+    })
+  }
+  catch (e) {
+    console.log("Erro ao enviar encerrante para API:")
+    console.log(e.message)
+  }
 
   C_CloseSocket()
   console.log("\nConexao encerrada.")

@@ -25,8 +25,10 @@ async function sendEncerrante(data) {
         await login()
     }
 
+    const url = `${API_URL}/tanques/telemed/${data.posto}`
+
     try {
-        const response = await axios.post(`${API_URL}/tanques/telemed`, data, {
+        const response = await axios.post(url, data, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -38,7 +40,7 @@ async function sendEncerrante(data) {
             console.log("Token expirado/invalido, fazendo login novamente...")
             console.log("Resposta 401:", JSON.stringify(error.response.data))
             await login()
-            const retry = await axios.post(`${API_URL}/tanques/telemed`, data, {
+            const retry = await axios.post(url, data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`

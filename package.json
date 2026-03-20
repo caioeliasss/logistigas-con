@@ -16,6 +16,7 @@
     "build": "pkg . --compress GZip"
   },
   "dependencies": {
+    "axios": "^1.13.6",
     "koffi": "^2.15.2"
   },
   "devDependencies": {

@@ -11,10 +11,12 @@ async function login() {
             password: "maq6816230"
         });
         token = response.data.token;
-        console.log("Login realizado com sucesso")
+        console.log("Login realizado com sucesso, token:", token ? token.substring(0, 20) + "..." : "VAZIO")
         return response.data;
     } catch (error) {
-        console.error("Erro ao fazer login:", error.message);
+        const msg = error.response ? error.response.data : error.message
+        console.error("Erro ao fazer login:", JSON.stringify(msg));
+        throw error;
     }
 }
 
@@ -33,7 +35,8 @@ async function sendEncerrante(data) {
         console.log("Encerrante enviado com sucesso:", response.data)
     } catch (error) {
         if (error.response && error.response.status === 401) {
-            console.log("Token expirado, fazendo login novamente...")
+            console.log("Token expirado/invalido, fazendo login novamente...")
+            console.log("Resposta 401:", JSON.stringify(error.response.data))
             await login()
             const retry = await axios.post(`${API_URL}/tanques/telemed`, data, {
                 headers: {
@@ -43,7 +46,8 @@ async function sendEncerrante(data) {
             })
             console.log("Encerrante enviado com sucesso (retry):", retry.data)
         } else {
-            console.error("Erro ao enviar encerrante:", error.message)
+            const msg = error.response ? error.response.data : error.message
+            console.error("Erro ao enviar encerrante:", JSON.stringify(msg))
         }
     }
 }

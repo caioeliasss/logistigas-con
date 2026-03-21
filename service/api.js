@@ -27,7 +27,7 @@ async function sendEncerrante(data) {
         await login()
     }
 
-    const url = `${API_URL}/tanques/telemed/${data.posto}`
+    const url = `${API_URL}/encerrantes/${data.posto}`
     console.log("Enviando encerrante para:", url)
 
     try {

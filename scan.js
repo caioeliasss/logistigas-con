@@ -1,5 +1,4 @@
 const path = require("path")
-const readline = require("readline")
 
 console.log("Script iniciado...")
 console.log("Diretorio:", __dirname)
@@ -30,11 +29,6 @@ const BICOS = {
   "11": { concentrador: "11", tanque: "004", bomba: "BOMBA 04", produto: "OLEO DIESEL B S10 - COMUM" },
 }
 
-function waitEnter() {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-  return new Promise((resolve) => rl.question("\nPressione ENTER para sair...", () => { rl.close(); resolve() }))
-}
-
 async function main() {
   let koffi
   try {
@@ -42,7 +36,6 @@ async function main() {
   } catch (e) {
     console.log("Erro ao carregar modulo koffi:")
     console.log(e.message)
-    await waitEnter()
     process.exit(1)
   }
 
@@ -53,7 +46,6 @@ async function main() {
     console.log(`Erro ao carregar DLL: ${DLL_PATH}`)
     console.log("Coloque a companytec.dll na mesma pasta do executavel.")
     console.log(e.message)
-    await waitEnter()
     process.exit(1)
   }
 
@@ -65,7 +57,6 @@ async function main() {
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
     console.log("Falha ao conectar no concentrador")
-    await waitEnter()
     process.exit(1)
   }
   console.log(`Conectou em ${ip}:${PORT}\n`)
@@ -107,11 +98,10 @@ async function main() {
 
   C_CloseSocket()
   console.log("\nConexao encerrada.")
-  await waitEnter()
 }
 
-main().catch(async (e) => {
+main().catch((e) => {
   console.log("Erro inesperado:")
   console.log(e.message)
-  await waitEnter()
+  process.exit(1)
 })

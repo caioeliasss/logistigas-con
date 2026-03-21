@@ -79,7 +79,7 @@ async function main() {
     } else {
       // BICOS[bico].encerrante = resultado
       const tanque = BICOS[bico].tanque
-      encerrantes = { ...encerrantes, [tanque]: resultado }
+      encerrantes[tanque] = (encerrantes[tanque] || 0) + resultado
       // console.log(`  ${bicoStr}  | ${encerrantes}`)
     }
   }

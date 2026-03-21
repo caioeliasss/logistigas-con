@@ -67,6 +67,8 @@ async function main() {
 
   let bicosFalha = []
 
+  let encerrantes = {}
+
   for (let bico in BICOS) {
     const bicoStr = bico
     const resultado = C_ReadTotalsVolume(bicoStr)
@@ -75,8 +77,10 @@ async function main() {
       console.log(`  ${bicoStr}  | FALHA (-1)`)
       bicosFalha.push(bicoStr)
     } else {
-      BICOS[bico].encerrante = resultado
-      console.log(`  ${bicoStr}  | ${resultado}`)
+      // BICOS[bico].encerrante = resultado
+      const tanque = BICOS[bico].tanque
+      encerrantes = { ...encerrantes, [tanque]: resultado }
+      // console.log(`  ${bicoStr}  | ${encerrantes}`)
     }
   }
 
@@ -88,7 +92,7 @@ async function main() {
     await sendEncerrante({
       posto: POSTO,
       dataLeitura: new Date(),
-      bicos: BICOS,
+      bicos: encerrantes,
     })
   }
   catch (e) {

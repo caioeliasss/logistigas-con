@@ -1,6 +1,7 @@
 const axios = require("axios")
+const path = require("path")
 const dotenv = require("dotenv")
-dotenv.config()
+dotenv.config({ path: path.join(__dirname, "..", ".env") })
 const API_URL = "https://api.logistigas.com.br/api"
 
 let token = null

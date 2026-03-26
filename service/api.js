@@ -1,5 +1,6 @@
 const axios = require("axios")
-
+const dotenv = require("dotenv")
+dotenv.config()
 const API_URL = "https://api.logistigas.com.br/api"
 
 let token = null
@@ -8,8 +9,8 @@ async function login() {
     try {
         console.log("Fazendo login em:", `${API_URL}/auth/login`)
         const response = await axios.post(`${API_URL}/auth/login`, {
-            email: "maquinaJL@gmail.com",
-            password: "maq6816230"
+            email: process.env.EMAIL,
+            password: process.env.PASSWORD
         });
         token = response.data.token;
         console.log("Login realizado com sucesso, token:", token ? token.substring(0, 20) + "..." : "VAZIO")

@@ -1,14 +1,21 @@
 const path = require("path")
+const dotenv = require("dotenv")
+dotenv.config()
 
 console.log("Script iniciado...")
 console.log("Diretorio:", __dirname)
 
 const DLL_PATH = path.join(__dirname, "companytec.dll")
 
-const ip = "192.168.10.91"
+const ip = process.env.IP
 const PORT = 2001
 
-const POSTO = "6908fdef32603381acec0c07"
+const POSTO = process.env.POSTOID
+
+if (!ip || !POSTO) {
+  console.error("IP ou POSTO não configurado no .env")
+  process.exit(1)
+}
 
 const BICOS = {
   "84": { concentrador: "84", tanque: "001", bomba: "BOMBA 01", produto: "GASOLINA C COMUM" },

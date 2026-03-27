@@ -13,7 +13,8 @@
     ]
   },
   "scripts": {
-    "build": "pkg . --compress GZip"
+    "build": "pkg . --compress GZip",
+    "zip": "node zip.js"
   },
   "dependencies": {
     "axios": "^1.13.6",

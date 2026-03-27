@@ -68,7 +68,7 @@ async function main() {
   const C_OpenSocket2      = lib.func("int __stdcall C_OpenSocket2(const char *ip, int port)")
   const C_CloseSocket      = lib.func("int __stdcall C_CloseSocket()")
   const C_ReadTotalsVolume = lib.func("int __stdcall C_ReadTotalsVolume(const char *bico)")
-  const LePPLNivel          = lib.func("double __stdcall LePPLNivel(const char *bico, int nivel)")
+  // const LePPLNivel          = lib.func("double __stdcall LePPLNivel(const char *bico, int nivel)")
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
@@ -91,7 +91,7 @@ async function main() {
   for (let bico in BICOS) {
     const bicoStr = bico
     const resultado = C_ReadTotalsVolume(bicoStr)
-    const resultadoPreco = LePPLNivel(bicoStr, 0)
+    // const resultadoPreco = LePPLNivel(bicoStr, 0)
 
     if (resultado === -1) {
       log(logs, `  ${bicoStr}  | FALHA (-1)`)
@@ -99,7 +99,7 @@ async function main() {
     } else {
       const tanque = BICOS[bico].tanque
       encerrantes[tanque] = (encerrantes[tanque] || 0) + resultado
-      precos[tanque] = resultadoPreco
+      // precos[tanque] = resultadoPreco
       log(logs, `  ${bicoStr}  | ${encerrantes[tanque]} | Preço: ${precos[tanque]}`)
     }
   }

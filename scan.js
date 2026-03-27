@@ -21,6 +21,26 @@ if (!ip || !POSTO) {
 
 const BICOS = bicos
 
+async function enviarLogs(logs) {
+  try {
+    const sendEncerrante = require("./service/api").sendEncerrante
+    await sendEncerrante({
+      posto: POSTO,
+      dataLeitura: new Date(),
+      bicos: {},
+      logs: logs.join("\n"),
+    })
+  } catch (e) {
+    console.log("Erro ao enviar logs para API:")
+    console.log(e.message)
+  }
+}
+
+function log(logs, msg) {
+  console.log(msg)
+  logs.push(msg)
+}
+
 async function main() {
   const logs = []
 

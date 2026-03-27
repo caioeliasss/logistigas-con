@@ -29,13 +29,35 @@ const BICOS = {
   "11": { concentrador: "11", tanque: "004", bomba: "BOMBA 04", produto: "OLEO DIESEL B S10 - COMUM" },
 }
 
+function log(logs, msg) {
+  console.log(msg)
+  logs.push(msg)
+}
+
+async function enviarLogs(logs) {
+  try {
+    const sendEncerrante = require("./service/api").sendEncerrante
+    await sendEncerrante({
+      posto: POSTO,
+      dataLeitura: new Date(),
+      bicos: {},
+      logs: logs.join("\n"),
+    })
+  } catch (e) {
+    console.log("Erro ao enviar logs para API:")
+    console.log(e.message)
+  }
+}
+
 async function main() {
+  const logs = []
+
   let koffi
   try {
     koffi = require("koffi")
   } catch (e) {
-    console.log("Erro ao carregar modulo koffi:")
-    console.log(e.message)
+    log(logs, "Erro ao carregar modulo koffi:")
+    log(logs, e.message)
     process.exit(1)
   }
 
@@ -43,9 +65,9 @@ async function main() {
   try {
     lib = koffi.load(DLL_PATH)
   } catch (e) {
-    console.log(`Erro ao carregar DLL: ${DLL_PATH}`)
-    console.log("Coloque a companytec.dll na mesma pasta do executavel.")
-    console.log(e.message)
+    log(logs, `Erro ao carregar DLL: ${DLL_PATH}`)
+    log(logs, "Coloque a companytec.dll na mesma pasta do executavel.")
+    log(logs, e.message)
     process.exit(1)
   }
 
@@ -56,14 +78,15 @@ async function main() {
 
   const connected = C_OpenSocket2(ip, PORT)
   if (!connected) {
-    console.log("Falha ao conectar no concentrador")
+    log(logs, "Falha ao conectar no concentrador")
+    await enviarLogs(logs)
     process.exit(1)
   }
-  console.log(`Conectou em ${ip}:${PORT}\n`)
+  log(logs, `Conectou em ${ip}:${PORT}\n`)
 
-  console.log("=== LEITURA DE ENCERRANTES (C_ReadTotalsVolume) ===")
-  console.log("Bico | Encerrante (volume)")
-  console.log("-----|--------------------")
+  log(logs, "=== LEITURA DE ENCERRANTES (C_ReadTotalsVolume) ===")
+  log(logs, "Bico | Encerrante (volume)")
+  log(logs, "-----|--------------------")
 
   let bicosFalha = []
 
@@ -74,17 +97,16 @@ async function main() {
     const resultado = C_ReadTotalsVolume(bicoStr)
 
     if (resultado === -1) {
-      console.log(`  ${bicoStr}  | FALHA (-1)`)
+      log(logs, `  ${bicoStr}  | FALHA (-1)`)
       bicosFalha.push(bicoStr)
     } else {
-      // BICOS[bico].encerrante = resultado
       const tanque = BICOS[bico].tanque
       encerrantes[tanque] = (encerrantes[tanque] || 0) + resultado
-      // console.log(`  ${bicoStr}  | ${encerrantes}`)
+      log(logs, `  ${bicoStr}  | ${encerrantes[tanque]}`)
     }
   }
 
-  console.log("\nBicos com falha:", bicosFalha.length > 0 ? bicosFalha.join(", ") : "Nenhum")
+  log(logs, "\nBicos com falha: " + (bicosFalha.length > 0 ? bicosFalha.join(", ") : "Nenhum"))
 
   try {
     const sendEncerrante = require("./service/api").sendEncerrante
@@ -93,6 +115,7 @@ async function main() {
       posto: POSTO,
       dataLeitura: new Date(),
       bicos: encerrantes,
+      logs: logs.join("\n"),
     })
   }
   catch (e) {
@@ -101,7 +124,7 @@ async function main() {
   }
 
   C_CloseSocket()
-  console.log("\nConexao encerrada.")
+  log(logs, "\nConexao encerrada.")
 }
 
 main().catch((e) => {

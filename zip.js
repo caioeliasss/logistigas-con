@@ -11,7 +11,7 @@ if (!name) {
 }
 
 const zipName = `logistigas-con-${name}.zip`;
-const exclude = ["dados.js", "erro.log", "saida.log", zipName];
+const exclude = ["dados.js", "erro.log", "saida.log" ,".env", "bicos.js", zipName];
 
 // Remove zip antigo se existir
 if (fs.existsSync(zipName)) fs.unlinkSync(zipName);

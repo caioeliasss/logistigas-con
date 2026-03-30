@@ -1,2 +1,3 @@
 @echo off
-"%~dp0nmap-7.92\nmap.exe" %*
+powershell -Command "Test-NetConnection %IP% -Port 2001"
+powershell -Command "Test-NetConnection %IP% -Port 1771"

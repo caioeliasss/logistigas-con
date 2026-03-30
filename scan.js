@@ -10,12 +10,12 @@ console.log("Diretorio:", __dirname)
 const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = process.env.IP
-const PORT = 2001
+const PORT = process.env.PORT
 
 const POSTO = process.env.POSTOID
 
-if (!ip || !POSTO) {
-  console.error("IP ou POSTO não configurado no .env")
+if (!ip || !POSTO || !PORT) {
+  console.error("IP, POSTO ou PORT não configurado no .env")
   process.exit(1)
 }
 

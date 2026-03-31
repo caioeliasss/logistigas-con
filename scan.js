@@ -10,7 +10,7 @@ console.log("Diretorio:", __dirname)
 const DLL_PATH = path.join(__dirname, "companytec.dll")
 
 const ip = process.env.IP
-const PORT = process.env.PORT
+const PORT = parseInt(process.env.PORT, 10)
 
 const POSTO = process.env.POSTOID
 

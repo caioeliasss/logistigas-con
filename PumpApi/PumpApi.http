@@ -1,0 +1,35 @@
+@PumpApi_HostAddress = http://localhost:5137
+
+GET {{PumpApi_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+GET {{PumpApi_HostAddress}}/api/encerrantes/10
+Accept: application/json
+
+###
+
+GET {{PumpApi_HostAddress}}/api/precos/10?levels=3
+Accept: application/json
+
+###
+
+POST {{PumpApi_HostAddress}}/api/raw-command
+Content-Type: application/json
+
+{
+	"command": "(&T10u67)"
+}
+
+###
+
+POST {{PumpApi_HostAddress}}/api/precos
+Content-Type: application/json
+
+{
+	"bicos": ["10", "11", "04", "08"],
+	"levels": 3
+}
+
+###
